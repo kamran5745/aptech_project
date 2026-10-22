@@ -1,0 +1,778 @@
+<!-- saved from url=(0033)http://127.0.0.1:5500/index.html# -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body class="dark-mode" style="">```html
+
+
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="./Admin Dashboard_files/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="./Admin Dashboard_files/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #f5f7fb;
+      font-family: Arial, sans-serif;
+    }
+
+    .sidebar {
+      min-height: 100vh;
+      background: #172337;
+      color: white;
+      position: fixed;
+      width: 240px;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      transition: .3s;
+    }
+
+    .brand {
+      padding: 22px;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 1px solid #30405a;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #dce3ed;
+      text-decoration: none;
+      padding: 14px 22px;
+      transition: .2s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .sidebar i {
+      width: 25px;
+    }
+
+    .main {
+      margin-left: 240px;
+      transition: .3s;
+    }
+
+    .topbar {
+      background: white;
+      padding: 14px 25px;
+      box-shadow: 0 1px 8px #ddd;
+    }
+
+    .stat-card {
+      border: 0;
+      border-radius: 10px;
+      color: white;
+      overflow: hidden;
+    }
+
+    .blue {
+      background: linear-gradient(135deg, #0d6efd, #3989ff);
+    }
+
+    .green {
+      background: linear-gradient(135deg, #198754, #31b86c);
+    }
+
+    .orange {
+      background: linear-gradient(135deg, #fd7e14, #ffad33);
+    }
+
+    .card {
+      border: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    }
+
+    .chart-box {
+      height: 280px;
+    }
+
+    .activity-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .activity-item:last-child {
+      border-bottom: 0;
+    }
+
+    .quick-btn {
+      min-height: 100px;
+      border: 0;
+      color: white;
+      border-radius: 8px;
+    }
+
+    .table td,
+    .table th {
+      vertical-align: middle;
+    }
+
+    .dark-mode {
+      background: #111827 !important;
+      color: #e5e7eb;
+    }
+
+    .dark-mode .card,
+    .dark-mode .topbar {
+      background: #1f2937;
+      color: #e5e7eb;
+    }
+
+    .dark-mode .table {
+      color: #e5e7eb;
+    }
+
+    .dark-mode .text-muted {
+      color: #9ca3af !important;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -240px;
+      }
+
+      .sidebar.show {
+        left: 0;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+    }
+  </style>
+
+
+
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+  <div class="brand">
+    <i class="bi bi-layers-fill"></i> MyDashboard
+  </div>
+
+  <a href="http://127.0.0.1:5500/index.html#" class="" onclick="showPage(&#39;Dashboard&#39;, this)">
+    <i class="bi bi-house-fill"></i> Dashboard
+  </a>
+
+  <a href="http://127.0.0.1:5500/index.html#" onclick="showPage(&#39;Users&#39;, this)" class="">
+    <i class="bi bi-people-fill"></i> Users
+  </a>
+
+  <a href="http://127.0.0.1:5500/index.html#" onclick="showPage(&#39;Products&#39;, this)" class="active">
+    <i class="bi bi-box-seam-fill"></i> Products
+  </a>
+
+  <a href="http://127.0.0.1:5500/index.html#" onclick="showPage(&#39;Orders&#39;, this)">
+    <i class="bi bi-cart-fill"></i> Orders
+  </a>
+
+  <a href="http://127.0.0.1:5500/index.html#" onclick="showPage(&#39;Messages&#39;, this)">
+    <i class="bi bi-envelope-fill"></i> Messages
+  </a>
+
+  <a href="http://127.0.0.1:5500/index.html#" onclick="showPage(&#39;Settings&#39;, this)" class="">
+    <i class="bi bi-gear-fill"></i> Settings
+  </a>
+
+  <a href="http://127.0.0.1:5500/index.html#" onclick="logout()">
+    <i class="bi bi-power"></i> Logout
+  </a>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar d-flex align-items-center gap-3">
+
+    <button class="btn btn-outline-primary" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <div class="input-group" style="max-width:350px;">
+      <input type="text" id="search" class="form-control" placeholder="Search here..." onkeyup="searchTable()">
+      <button class="btn btn-outline-secondary">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+
+      <button class="btn btn-light position-relative" onclick="showNotification()">
+        <i class="bi bi-bell-fill"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          3
+        </span>
+      </button>
+
+      <button class="btn btn-outline-dark" onclick="toggleDarkMode()">
+        <i class="bi bi-moon-fill"></i>
+      </button>
+
+      <div>
+        <i class="bi bi-person-circle fs-4"></i>
+        Admin
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- CONTENT -->
+  <div class="container-fluid p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 id="pageTitle">Products</h2>
+        <p class="text-muted">Welcome back, Admin! Here's what's happening today.</p>
+      </div>
+
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+        <i class="bi bi-person-plus-fill"></i>
+        Add New User
+      </button>
+    </div>
+
+
+    <!-- STATISTICS -->
+    <div class="row g-4 mb-4">
+
+      <div class="col-md-4">
+        <div class="card stat-card blue p-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6>Total Users</h6>
+              <h2>1,248</h2>
+              <small>↑ 12% from last month</small>
+            </div>
+            <i class="bi bi-people-fill fs-1"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card green p-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6>Total Products</h6>
+              <h2>342</h2>
+              <small>↑ 8% from last month</small>
+            </div>
+            <i class="bi bi-box-seam fs-1"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card orange p-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6>Total Orders</h6>
+              <h2>856</h2>
+              <small>↑ 14% from last month</small>
+            </div>
+            <i class="bi bi-cart-fill fs-1"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+      <!-- SALES -->
+      <div class="col-lg-8">
+
+        <div class="card p-4 mb-4">
+          <h5>
+            <i class="bi bi-graph-up text-primary"></i>
+            Sales Overview
+          </h5>
+
+          <div class="chart-box">
+            <canvas id="salesChart" width="657" height="210" style="display: block; box-sizing: border-box; height: 280px; width: 876.4px;"></canvas>
+          </div>
+        </div>
+
+
+        <!-- ORDERS TABLE -->
+        <div class="card p-4">
+
+          <h5 class="mb-3">
+            <i class="bi bi-cart text-primary"></i>
+            Latest Orders
+          </h5>
+
+          <div class="table-responsive">
+
+            <table class="table table-hover" id="orderTable">
+
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <tr style="">
+                  <td>1</td>
+                  <td>John Doe</td>
+                  <td>Wireless Headphones</td>
+                  <td>$199</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" onclick="viewOrder(&#39;John Doe&#39;)">View</button>
+
+                    <button class="btn btn-sm btn-success" onclick="editOrder(this)">Edit</button>
+
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder(this)">Delete</button>
+                  </td>
+                </tr>
+
+                <tr style="">
+                  <td>2</td>
+                  <td>Sarah Khan</td>
+                  <td>Smart Watch</td>
+                  <td>$149</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" onclick="viewOrder(&#39;Sarah Khan&#39;)">View</button>
+
+                    <button class="btn btn-sm btn-success" onclick="editOrder(this)">Edit</button>
+
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder(this)">Delete</button>
+                  </td>
+                </tr>
+
+                <tr style="">
+                  <td>3</td>
+                  <td>Ali Raza</td>
+                  <td>Laptop</td>
+                  <td>$899</td>
+                  <td><span class="badge bg-info">Shipped</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" onclick="viewOrder(&#39;Ali Raza&#39;)">View</button>
+
+                    <button class="btn btn-sm btn-success" onclick="editOrder(this)">Edit</button>
+
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder(this)">Delete</button>
+                  </td>
+                </tr>
+
+                <tr style="">
+                  <td>4</td>
+                  <td>Fatima Noor</td>
+                  <td>Backpack</td>
+                  <td>$59</td>
+                  <td><span class="badge bg-warning">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" onclick="viewOrder(&#39;Fatima Noor&#39;)">View</button>
+
+                    <button class="btn btn-sm btn-success" onclick="editOrder(this)">Edit</button>
+
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder(this)">Delete</button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT SIDE -->
+      <div class="col-lg-4">
+
+        <!-- ACTIVITY -->
+        <div class="card p-4 mb-4">
+
+          <h5>
+            <i class="bi bi-clock-history"></i>
+            Recent Activity
+          </h5>
+
+          <div class="activity-item">
+            <strong>New user registered</strong>
+            <br>
+            <small class="text-muted">John Doe · 2 minutes ago</small>
+          </div>
+
+          <div class="activity-item">
+            <strong>New order placed</strong>
+            <br>
+            <small class="text-muted">Order #1001 · 12 minutes ago</small>
+          </div>
+
+          <div class="activity-item">
+            <strong>Product updated</strong>
+            <br>
+            <small class="text-muted">Wireless Headphones · 25 minutes ago</small>
+          </div>
+
+          <div class="activity-item">
+            <strong>Message received</strong>
+            <br>
+            <small class="text-muted">From Sarah · 1 hour ago</small>
+          </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+        <div class="card p-4">
+
+          <h5 class="mb-3">
+            <i class="bi bi-lightning-fill"></i>
+            Quick Actions
+          </h5>
+
+          <div class="row g-3">
+
+            <div class="col-6">
+              <button class="btn btn-primary w-100 quick-btn" data-bs-toggle="modal" data-bs-target="#userModal">
+                <i class="bi bi-person-plus fs-3"></i><br>
+                Add New User
+              </button>
+            </div>
+
+            <div class="col-6">
+              <button class="btn btn-success w-100 quick-btn" onclick="addProduct()">
+                <i class="bi bi-box-seam fs-3"></i><br>
+                Add Product
+              </button>
+            </div>
+
+            <div class="col-6">
+              <button class="btn btn-warning w-100 quick-btn" onclick="createOrder()">
+                <i class="bi bi-cart-plus fs-3"></i><br>
+                Create Order
+              </button>
+            </div>
+
+            <div class="col-6">
+              <button class="btn btn-info w-100 quick-btn" onclick="sendMessage()">
+                <i class="bi bi-envelope fs-3"></i><br>
+                Send Message
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ADD USER MODAL -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true" style="display: none;">
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Add New User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form onsubmit="addUser(event)">
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="userName" class="form-control" placeholder="Enter full name" required="">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="userEmail" class="form-control" placeholder="Enter email" required="">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select id="userRole" class="form-select">
+              <option>Admin</option>
+              <option>Manager</option>
+              <option>User</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Save User
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="./Admin Dashboard_files/bootstrap.bundle.min.js.download"></script>
+
+<!-- Chart.js -->
+<script src="./Admin Dashboard_files/chart.js.download"></script>
+
+
+<script>
+
+  // SIDEBAR
+  function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("show");
+  }
+
+
+  // PAGE NAVIGATION
+  function showPage(page, element) {
+
+    document.getElementById("pageTitle").innerText = page;
+
+    document.querySelectorAll(".sidebar a").forEach(a => {
+      a.classList.remove("active");
+    });
+
+    element.classList.add("active");
+
+    if (page !== "Dashboard") {
+      alert(page + " page selected!");
+    }
+  }
+
+
+  // DARK MODE
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+  }
+
+
+  // SEARCH
+  function searchTable() {
+
+    let input = document.getElementById("search")
+      .value.toLowerCase();
+
+    let rows = document.querySelectorAll("#orderTable tbody tr");
+
+    rows.forEach(row => {
+
+      row.style.display =
+        row.innerText.toLowerCase().includes(input)
+        ? ""
+        : "none";
+
+    });
+  }
+
+
+  // NOTIFICATION
+  function showNotification() {
+    alert("You have 3 new notifications.");
+  }
+
+
+  // VIEW ORDER
+  function viewOrder(customer) {
+    alert("Viewing order for: " + customer);
+  }
+
+
+  // EDIT ORDER
+  function editOrder(button) {
+
+    let row = button.closest("tr");
+    let customer = row.cells[1].innerText;
+
+    let newName = prompt(
+      "Enter new customer name:",
+      customer
+    );
+
+    if (newName) {
+      row.cells[1].innerText = newName;
+    }
+  }
+
+
+  // DELETE ORDER
+  function deleteOrder(button) {
+
+    if (confirm("Are you sure you want to delete this order?")) {
+      button.closest("tr").remove();
+      alert("Order deleted successfully!");
+    }
+  }
+
+
+  // ADD USER
+  function addUser(event) {
+
+    event.preventDefault();
+
+    let name = document.getElementById("userName").value;
+    let email = document.getElementById("userEmail").value;
+    let role = document.getElementById("userRole").value;
+
+    alert(
+      "User added successfully!\n\n" +
+      "Name: " + name +
+      "\nEmail: " + email +
+      "\nRole: " + role
+    );
+
+    document.getElementById("userName").value = "";
+    document.getElementById("userEmail").value = "";
+
+    bootstrap.Modal.getInstance(
+      document.getElementById("userModal")
+    ).hide();
+  }
+
+
+  // QUICK ACTIONS
+  function addProduct() {
+    alert("Add Product button clicked!");
+  }
+
+  function createOrder() {
+    alert("Create Order button clicked!");
+  }
+
+  function sendMessage() {
+    alert("Send Message button clicked!");
+  }
+
+
+  // SALES CHART
+  const ctx = document.getElementById("salesChart");
+
+  new Chart(ctx, {
+
+    type: "line",
+
+    data: {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul"
+      ],
+
+      datasets: [{
+        label: "Sales",
+        data: [
+          100,
+          250,
+          400,
+          350,
+          260,
+          500,
+          680
+        ],
+
+        borderWidth: 3,
+        fill: true,
+        tension: .4
+      }]
+    },
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+
+  });
+
+
+  // LOGOUT
+  function logout() {
+
+    if (confirm("Are you sure you want to logout?")) {
+      alert("Logged out successfully!");
+      window.location.href = "login.html";
+    }
+
+  }
+
+</script>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+
+```</body></html>
